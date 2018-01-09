@@ -27,7 +27,7 @@ class DataManager:
         all_objects = self.all()
         store = IterableStore(all_objects)
         manager = store.query(self)
-        return list(manager.filter(*args, **kwargs))
+        return manager.filter(*args, **kwargs)
 
     def create(self, *args, **kwargs):
         eid = self._table.insert(kwargs)

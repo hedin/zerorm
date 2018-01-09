@@ -22,7 +22,7 @@ def base_model(db_instance):
 
 
 @pytest.fixture()
-def simple_model(base_model):
+def simple(base_model):
     class Person(base_model['model']):
         name = models.StringType(required=True)
         age = models.IntType()
