@@ -10,8 +10,8 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='zerorm',
-    version='0.1.0',
-    description='Zerorm looks like ORM and stores your data',
+    version='0.2.0',
+    description='Looks like ORM and stores your data',
     long_description=readme,
     author='Aleksandr Mironov',
     author_email='a.m.mironov@gmail.com',
