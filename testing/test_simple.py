@@ -1,3 +1,4 @@
+from lifter.query import QuerySet
 def test_save(simple):
     model = simple['model']
     for person in simple['data'][0:-1]:
@@ -30,7 +31,9 @@ def test_get_by_field(simple):
 
 def test_all(simple):
     model = simple['model']
-    assert len(model.objects.all()) == 5
+    records = model.objects.all()
+    assert isinstance(records, QuerySet)
+    assert len(records) == 5
 
 
 def test_filter_eq(simple):

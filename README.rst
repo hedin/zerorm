@@ -17,7 +17,7 @@ Installation
 Usage
 -----
 
-First create a *models.py* file with database instance (TinyDB) attached to model (Schematics):
+First create a file with models and database instance attached to every model:
 
 .. code-block:: python
 
@@ -30,7 +30,7 @@ First create a *models.py* file with database instance (TinyDB) attached to mode
         author = models.StringType(required=True)
         author_email = models.EmailType()
         text = models.StringType()
-        stars = models.IntType(min_value=0, max_value=5)
+        views = models.IntType(min_value=0)
 
         class Meta:
             database = database
@@ -49,28 +49,34 @@ Now create some objects:
     >>> bob_message.save()  # Save object
     1
     >>>
-    >>> bob_message.stars = 3
+    >>> bob_message.views = 3
     >>> bob_message.save()  # Update object
     >>>
     >>> alice_message = Message.objects.create(author='Alice',
     ...                                        text='Hi, Bob!',
-    ...                                        stars=0)
+    ...                                        views=0)
     >>> alice_message
     <Message: Message object>
 
-And try to retrieve them via *.objects* (DataManger with Lifter)
+And try to retrieve them via *objects*
 
 .. code-block:: pycon
 
     >>> Message.objects.all()
+    <QuerySet, len() = 2>
+    >>> list(Message.objects.all())
     [<Message: Message object>, <Message: Message object>]
-    >>> first_message = Message.objects.get(eid=1)
-    >>> first_message.author
-    'Bob'
-    >>> Message.objects.filter(stars__gte=3)  # Only Bob's message has 3 stars
+    >>>
+    >>> second_message = Message.objects.get(eid=2)
+    >>> second_message.author
+    'Alice'
+    >>>
+    >>> Message.objects.filter(views__gte=3)  # Only Bob's message has 3 views
+    <QuerySet, len() = 1>
+    >>> list(Message.objects.filter(views__gte=3))
     [<Message: Message object>]
 
-You can also redefine model's __str__ method for better repr just like in Django.
+You can also redefine model's *__str__* method for better repr just like in Django.
 
 .. code-block:: python
 
@@ -82,7 +88,7 @@ You can also redefine model's __str__ method for better repr just like in Django
 
 .. code-block:: pycon
 
-    >>> Message.objects.all()
+    >>> list(Message.objects.all())
     [<Message: by Bob>, <Message: by Alice>]
 
 License

@@ -20,8 +20,12 @@ class DataManager:
         return None
 
     def all(self):
-        instances = self._table.all()
-        return [self.klass(eid=i.eid, **i) for i in instances]
+        # instances = self._table.all()
+        # return [self.klass(eid=i.eid, **i) for i in instances]
+        all_instances = [self.klass(eid=i.eid, **i) for i in self._table.all()]
+        store = IterableStore(all_instances)
+        manager = store.query(self)
+        return manager.all()
 
     def filter(self, *args, **kwargs):
         all_objects = self.all()
