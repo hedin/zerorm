@@ -61,6 +61,18 @@ def test_filter_returns_qs(simple):
     assert list(records)[0].name == 'Alice'
 
 
+def test_exclude(simple):
+    model = simple['model']
+    records = model.objects.exclude(age=30)
+    assert len(records) == 3
+
+
+def test_exclude_returns_qs(simple):
+    model = simple['model']
+    records = model.objects.exclude(age=35).filter(age__gt=20)
+    assert len(records) == 3
+
+
 def test_delete(simple):
     model = simple['model']
     record = model.objects.get(eid=1)

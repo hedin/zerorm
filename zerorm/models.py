@@ -29,6 +29,12 @@ class DataManager:
         manager = store.query(self)
         return manager.filter(*args, **kwargs)
 
+    def exclude(self, *args, **kwargs):
+        all_objects = self.all()
+        store = IterableStore(all_objects)
+        manager = store.query(self)
+        return manager.exclude(*args, **kwargs)
+
     def create(self, *args, **kwargs):
         eid = self._table.insert(kwargs)
         if not eid:
