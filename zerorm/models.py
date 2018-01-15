@@ -8,20 +8,34 @@ class DBOperationError(Exception):
     pass
 
 
+class DoesNotExist(Exception):
+    pass
+
+
+class MultipleObjectsReturned(Exception):
+    pass
+
+
 class DataManager:
     def __init__(self, klass):
         self.klass = klass
         self._table = klass._table
 
-    def get(self, eid):
-        instance = self._table.get(eid=eid)
-        if instance:
-            return self.klass(eid=instance.eid, **instance)
-        return None
+    def get(self, *args, **kwargs):
+        # instance = self._table.get(eid=eid)
+        # if instance:
+        #     return self.klass(eid=instance.eid, **instance)
+        # return None
+        record = self.filter(*args, **kwargs)
+        if not record:
+            raise DoesNotExist
+
+        elif len(record) > 1:
+            raise MultipleObjectsReturned
+
+        return record[0]
 
     def all(self):
-        # instances = self._table.all()
-        # return [self.klass(eid=i.eid, **i) for i in instances]
         all_instances = [self.klass(eid=i.eid, **i) for i in self._table.all()]
         store = IterableStore(all_instances)
         manager = store.query(self)
@@ -43,7 +57,7 @@ class DataManager:
         eid = self._table.insert(kwargs)
         if not eid:
             raise DBOperationError('Failed to create record')
-        return self.get(eid=eid)
+        return self.get(id=eid)
 
     def save(self, data, eid=None):
         if not eid:
@@ -95,7 +109,7 @@ class Model(SchematicsModel, metaclass=FinalMeta):
     def __init__(self, eid=None, *args, **kwargs):
         super().__init__()
 
-        self.eid = eid
+        self.id = eid
         self._table = self.Meta.database.table(self._schema.name.lower())
         self.manager = DataManager(self)
 
@@ -109,13 +123,13 @@ class Model(SchematicsModel, metaclass=FinalMeta):
 
     @property
     def pk(self):
-        return self.eid
+        return self.id
 
     def save(self):
-        self.eid = self.manager.save(dict(self._data), self.eid)
-        return self.eid
+        self.id = self.manager.save(dict(self._data), self.id)
+        return self.id
 
     def delete(self):
-        if not self.eid:
+        if not self.id:
             raise DBOperationError('Could not delete unsaved object')
-        return self.manager.delete(self.eid)
+        return self.manager.delete(self.id)
