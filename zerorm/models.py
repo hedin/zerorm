@@ -21,19 +21,20 @@ class DataManager:
         self.klass = klass
         self._table = klass._table
 
-    def get(self, *args, **kwargs):
-        # instance = self._table.get(eid=eid)
-        # if instance:
-        #     return self.klass(eid=instance.eid, **instance)
-        # return None
-        record = self.filter(*args, **kwargs)
+    def _make_id(self, eid):
+        instance = self._table.get(eid=eid)
+        instance.update({'id': eid})
+        self._table.update(instance, eids=[eid, ])
+
+    def get(self, **kwargs):
+        record = self.filter(**kwargs)
         if not record:
             raise DoesNotExist
 
         elif len(record) > 1:
             raise MultipleObjectsReturned
 
-        return record[0]
+        return list(record)[0]
 
     def all(self):
         all_instances = [self.klass(eid=i.eid, **i) for i in self._table.all()]
@@ -57,6 +58,7 @@ class DataManager:
         eid = self._table.insert(kwargs)
         if not eid:
             raise DBOperationError('Failed to create record')
+
         return self.get(id=eid)
 
     def save(self, data, eid=None):
@@ -64,6 +66,7 @@ class DataManager:
             eid = self._table.insert(data)
             if not eid:
                 raise DBOperationError('Failed to save record')
+            self._make_id(eid)
 
         else:
             eid = self._table.update(data, eids=[eid, ])[0]
@@ -97,6 +100,8 @@ class FinalMeta(ModelMeta, ZeroMeta):
 
 
 class Model(SchematicsModel, metaclass=FinalMeta):
+    id = IntType()
+
     def __repr__(self):
         return '<{}: {}>'.format(
             self.__class__.__name__,
