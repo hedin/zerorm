@@ -17,16 +17,16 @@ def test_create(simple):
 
 def test_get_by_id(simple):
     model = simple['model']
-    record = model.objects.get(eid=1)
+    record = model.objects.get(id=1)
     assert record
     assert record.name == 'Alice'
 
 
 def test_get_by_field(simple):
-    # model = simple['model']
-    # record = model.objects.get(name='Eve')
-    # assert record
-    pass
+    model = simple['model']
+    record = model.objects.get(name='Eve')
+    assert record
+    assert record.name == 'Eve'
 
 
 def test_all(simple):
@@ -78,6 +78,6 @@ def test_exclude_returns_qs(simple):
 
 def test_delete(simple):
     model = simple['model']
-    record = model.objects.get(eid=1)
+    record = model.objects.get(id=1)
     record.delete()
     assert len(model.objects.all()) == 4
