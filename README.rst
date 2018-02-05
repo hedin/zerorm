@@ -1,11 +1,9 @@
 Zerorm
 ======
 
-Zerorm is a simple wrapper for three amazing packages. This repository is the
-place where `TinyDB <https://github.com/msiemens/tinydb>`_, `Schematics <https://github.com/schematics/schematics>`_
-and `Lifter <https://github.com/EliotBerriot/lifter>`_ together look like Django ORM.
-
-It's still work in progress and not everything looks like Django ORM, but it will.
+Zerorm is trying to combine `TinyDB <https://github.com/msiemens/tinydb>`_,
+`Schematics <https://github.com/schematics/schematics>`_
+and `Lifter <https://github.com/EliotBerriot/lifter>`_ together to look like an ORM.
 
 Installation
 ------------
@@ -17,7 +15,7 @@ Installation
 Usage
 -----
 
-First create a file with models and database instance attached to every model:
+First declare a model with TinyDB's instance attached to it:
 
 .. code-block:: python
 
@@ -30,7 +28,7 @@ First create a file with models and database instance attached to every model:
         author = models.StringType(required=True)
         author_email = models.EmailType()
         text = models.StringType()
-        views = models.IntType(min_value=0)
+        replies = models.IntType(min_value=0)
 
         class Meta:
             database = database
@@ -49,12 +47,12 @@ Now create some objects:
     >>> bob_message.save()  # Save object
     1
     >>>
-    >>> bob_message.views = 3
+    >>> bob_message.replies = 1
     >>> bob_message.save()  # Update object
     >>>
     >>> alice_message = Message.objects.create(author='Alice',
     ...                                        text='Hi, Bob!',
-    ...                                        views=0)
+    ...                                        replies=0)
     >>> alice_message
     <Message: Message object>
 
@@ -67,16 +65,16 @@ And try to retrieve them via *objects*
     >>> list(Message.objects.all())
     [<Message: Message object>, <Message: Message object>]
     >>>
-    >>> second_message = Message.objects.get(eid=2)
+    >>> second_message = Message.objects.get(id=2)
     >>> second_message.author
     'Alice'
     >>>
-    >>> Message.objects.filter(views__gte=3)  # Only Bob's message has 3 views
+    >>> Message.objects.filter(replies__gte=1)  # Only Bob's message has 1 replies
     <QuerySet, len() = 1>
-    >>> list(Message.objects.filter(views__gte=3))
+    >>> list(Message.objects.filter(replies__gte=1))
     [<Message: Message object>]
 
-You can also redefine model's *__str__* method for better repr just like in Django.
+You can redefine model's *__str__* method for better repr.
 
 .. code-block:: python
 
