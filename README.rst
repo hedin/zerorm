@@ -1,3 +1,5 @@
+You should probably use `alkali <https://github.com/kneufeld/alkali>`_ if you want to use JSON as DB.
+
 Zerorm
 ======
 
